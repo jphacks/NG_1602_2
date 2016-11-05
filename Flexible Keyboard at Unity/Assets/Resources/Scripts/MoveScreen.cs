@@ -33,6 +33,20 @@ public class MoveScreen : MonoBehaviour {
             A.anchoredPosition = new Vector2(A.anchoredPosition.x + x, A.anchoredPosition.y);
         }
     }
+    void MovingX(int num)
+    {
+        StartCoroutine(MovingX_Animation(num));
+    }
+
+    IEnumerator MovingX_Animation(int num)
+    {
+        int sign = num / Mathf.Abs(num);
+        for (int i = 0; i < 9 * Mathf.Abs(num); i++)
+        {
+            MoveX(25 * sign);
+            yield return null;
+        }
+    }
 
     // y移動
     void MoveY(int y)
@@ -43,7 +57,6 @@ public class MoveScreen : MonoBehaviour {
             A.anchoredPosition = new Vector2(A.anchoredPosition.x, A.anchoredPosition.y + y);
         }
     }
-
     void MovingY(int num)
     {
         StartCoroutine(MovingY_Animation(num));
@@ -52,9 +65,9 @@ public class MoveScreen : MonoBehaviour {
     IEnumerator MovingY_Animation(int num)
     {
         int sign = num / Mathf.Abs(num);
-        for (int i = 0; i < 20 * Mathf.Abs(num); i++)
+        for (int i = 0; i < 16 * Mathf.Abs(num); i++)
         {
-            MoveY(20 * sign);
+            MoveY(25 * sign);
             yield return null;
         }
     }
