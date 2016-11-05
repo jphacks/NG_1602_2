@@ -14,100 +14,114 @@ public class Bluetooth : MonoBehaviour {
     }
 
     // 名前とアドレスの一覧を返す
-    static public string GetPairedDevices()
+    static public List<string[]> GetPairedDevices()
     {
-        string str = "";
 #if UNITY_ANDROID && !UNITY_EDITOR
-        if (m_plugin != null){
-            if (m_plugin.Call<bool>("BluetoothEnabled", "")){
-                str += m_plugin.Call<string>("BluetoothPairedDevices", "");
+        if (bluetoothPlugin != null){
+            if (bluetoothPlugin.Call<bool>("Enabled")){
+                string str = bluetoothPlugin.Call<string>("GetPairedDevices");
+                return ChangeForList(str);
             }
             else {
-                str += "BluetoothError";
+                Error.error("Bluetoothが使えない状態になってるよ。");
             }
         }
         else {
-            str += "BluetoothError";
+            Error.error("プラグインのセット(Awakeの処理)ができていません。");
         }
-
-#else
-        str += "Not Andoroid";
 #endif
-        return str;
+        return new List<string[]>();
     }
 
-    // javaからのstringをname一覧に変換する関数
-    static public List<string> Disassembly(string str)
+    // string型のデバイス一覧をlist型に変換する関数
+    static private List<string[]> ChangeForList(string str)
     {
-        List<string> names = new List<string>();
-        int start = 0;
-        bool flag = true;
+        List<string[]> deviceList = new List<string[]>();
+        int nameStart = 0;
+        int addressStart = 0;
+        int count = 0;
 
         for (int i = 0; i < str.Length; i++)
         {
             if (str[i] == '\n')
             {
-                if (flag)
+                count++;
+                if (count == 1)
                 {
-                    names.Add(str.Substring(start, i - start));
-                    flag = false;
+                    addressStart = i + 1;
+                }
+                else if (count == 2)
+                {
+                    string name = str.Substring(nameStart, i - nameStart);
+                    string address = str.Substring(addressStart, i - addressStart);
+                    deviceList.Add(new string[] { name, address });
+                    nameStart = i + 1;
+                    count = 0;
                 }
                 else
-                {
-                    start = i + 1;
-                    flag = true;
-                }
+                    Error.error("ChangeForList (string -> list　の処理) のcountがおかしいですよ。");
             }
         }
 
-        return names;
+        return deviceList;
     }
 
-    static public string NameToAdress(string name)
-    {
-        string str = "";
-#if UNITY_ANDROID && !UNITY_EDITOR
-        if (m_plugin != null){
-                str += m_plugin.Call<string>("BluetoothNameTest", name);
-        }
-#endif
-        return str;
-    }
-
-    // 接続チャレンジ
+    // 選択したデバイスと接続試みる関数。
     static public bool TryConnect(string address)
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        if (m_plugin != null){
-                if (m_plugin.Call<bool>("SelectDevice", address)){
-                    if (m_plugin.Call<bool>("GetSocket")){
-                        if (m_plugin.Call<bool>("TryConnect")){
+        if (bluetoothPlugin != null){
+                if (bluetoothPlugin.Call<bool>("SelectDevice", address)){
+                    if (bluetoothPlugin.Call<bool>("GetSocket")){
+                        if (bluetoothPlugin.Call<bool>("TryConnect")){
                             return true;
                         }
+                        else {
+                            Error.error("bluetooth接続に失敗しました。");
+                        }
+                    }
+                    else {
+                        Error.error("socketの取得に失敗しました。");
                     }
                 }
+                else {
+                    Error.error("デバイスの選択に失敗しました。");
+                }
         }
-        return false;
+        else {
+            Error.error("プラグインのセット(Awakeの処理)ができていません。");
+        }
 #endif
         return false;
     }
 
-    // 送るチャレンジ
+    // 文字列を送る関数。
     static public bool TrySend(string str)
     {
+        // androidなら頑張って送る
 #if UNITY_ANDROID && !UNITY_EDITOR
-        if (m_plugin != null){
-            Debug.Log("ぷらぐいん");
-                if (m_plugin.Call<bool>("GetOutputStream")){
-            Debug.Log("あうとぷっと");
-                    if (m_plugin.Call<bool>("SendString", str)){
-            Debug.Log("せんど");
+        if (bluetoothPlugin != null){
+                if (bluetoothPlugin.Call<bool>("GetOutputStream")){
+                    if (bluetoothPlugin.Call<bool>("SendString", str)){
                             return true;
                     }
+                    else {
+                        Error.error("アプトプットストリームは取れましたが、文字列の送信に失敗しました。");
+                    }
                 }
+                else {
+                    Error.error("アウトプットストリームが取得できません。");
+                }
+        }
+        else {
+            Error.error("プラグインのセット(Awakeの処理)ができていません。");
         }
         return false;
 #endif
-        return false;
+        // unityならデバッグログ
+#if UNITY_EDITOR
+        Debug.Log(str);
+        return true;
+#endif
     }
 }
