@@ -21,6 +21,21 @@ public class Key : MonoBehaviour {
     {
         if (key != "")
         {
+            switch (key)
+            {
+                case "ue":
+                    key = ((char)18).ToString();
+                    break;
+                case "shita":
+                    key = ((char)20).ToString();
+                    break;
+                case "migi":
+                    key = ((char)19).ToString();
+                    break;
+                case "hidari":
+                    key = ((char)17).ToString();
+                    break;
+            }
             if (!Bluetooth.TrySend(key))
                 Error.error("sendできんかったで。(keyのやつ)");
         }

@@ -9,18 +9,20 @@ public class BluetoothSetting : MonoBehaviour {
 
     void Start()
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
         StartCoroutine(WaitTap());
+#endif
     }
 
     // tapされるまで待つ
     IEnumerator WaitTap()
     {
         yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-        test();
+        ShowList();
     }
 
     // ペアリング済みのデバイス一覧を表示する
-    public void test()
+    public void ShowList()
     {
         GetComponentInChildren<Text>().text = "";
 
@@ -56,7 +58,7 @@ public class BluetoothSetting : MonoBehaviour {
         bool tryresult = Bluetooth.TryConnect(address);
         // 成功したら画面遷移
         if (tryresult)
-            transform.parent.SendMessage("MovingY", -1);
+            transform.parent.SendMessage("Move", "Up");
         // 失敗はエラー
         else
             Error.error("接続に失敗したで。(Bluetooth.csじゃないほう)");
