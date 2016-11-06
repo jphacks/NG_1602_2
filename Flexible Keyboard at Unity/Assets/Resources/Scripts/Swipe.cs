@@ -17,13 +17,16 @@ public class Swipe : MonoBehaviour {
     {
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
         finish = Input.mousePosition;
-        SendMessage("Move", GetDirection(start, finish));
+        string result = GetDirection(start, finish);
+        if(result != null) SendMessage("Move", result);
     }
 
     private string GetDirection(Vector2 s, Vector2 f)
     {
         float var_x = s.x - f.x;
         float var_y = s.y - f.y;
+
+        if (Mathf.Abs(var_x) <= 150 && Mathf.Abs(var_y) <= 150) return null;
 
         if (Mathf.Abs(var_x) >= Mathf.Abs(var_y))
         {
