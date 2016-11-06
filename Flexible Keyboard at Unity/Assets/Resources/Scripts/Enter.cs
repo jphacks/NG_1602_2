@@ -15,12 +15,12 @@ public class Enter : MonoBehaviour {
         {
             this.touch = Input.touches[0];
 
-            // tapしてはじめてから2フレームいない
+            // tapしてはじめてから4フレームいない
             count++;
             if (this.touch.phase == TouchPhase.Began)
                 count = 0;
 
-            if (count < 2)
+            if (count < 4)
             {
                 Debug.Log("Input.touchCount == " + Input.touchCount);
                 switch (Input.touchCount)
@@ -30,7 +30,7 @@ public class Enter : MonoBehaviour {
                         break;
                     default: // 2本指以上
                         single = false;
-                        count = 3;
+                        count = 10;
                         if (GetComponent<MoveScreen>().currentScreen == "Bottom")
                             return;
                         string key = ((char)10).ToString();

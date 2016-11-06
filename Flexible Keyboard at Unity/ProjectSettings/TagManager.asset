@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - AlertCanvas
+  - Key
+  - Cell
   layers:
   - Default
   - TransparentFX
