@@ -31,7 +31,7 @@ GameObject:
   - 114: {fileID: 11454422}
   m_Layer: 5
   m_Name: Key
-  m_TagString: Untagged
+  m_TagString: Key
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -160,6 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: 
+  size: {x: 0, y: 0}
 --- !u!222 &22233766
 CanvasRenderer:
   m_ObjectHideFlags: 1
