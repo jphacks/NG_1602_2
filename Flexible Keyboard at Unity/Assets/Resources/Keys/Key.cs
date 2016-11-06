@@ -19,6 +19,8 @@ public class Key : MonoBehaviour {
 
     public void send()
     {
+        if (!FindObjectOfType<Enter>().single) return;
+
         if (key != "")
         {
             switch (key)
@@ -34,6 +36,9 @@ public class Key : MonoBehaviour {
                     break;
                 case "hidari":
                     key = ((char)17).ToString();
+                    break;
+                case "syuryo":
+                    key = ((char)21).ToString();
                     break;
             }
             if (!Bluetooth.TrySend(key))
